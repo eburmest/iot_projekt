@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include <M5Stack.h>
 
 //Das ist nur ein Versuch
 
