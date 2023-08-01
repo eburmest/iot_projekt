@@ -2,12 +2,12 @@
 #include "M5Stack.h"
 
 // Port A: kein Analog-Digital Wandler
-#define LICHT_SENSOR_DIGITAL_PIN 21 // Port A, gelbes kabel
-#define LICHT_SENSOR_ANALOG_PIN 22 // Port A, weißes kabel (kein Analog-Digital Wandler)
+//#define LICHT_SENSOR_DIGITAL_PIN 21 // Port A, gelbes kabel
+//#define LICHT_SENSOR_ANALOG_PIN 22 // Port A, weißes kabel (kein Analog-Digital Wandler)
 
-// Port B: von Motorsteuerung belegt
-//#define LICHT_SENSOR_DIGITAL_PIN 26 // Port B, gelbes kabel
-//#define LICHT_SENSOR_ANALOG_PIN 36 // Port B, weißes kabel 
+// Port B:
+#define LICHT_SENSOR_DIGITAL_PIN 26 // Port B, gelbes kabel
+#define LICHT_SENSOR_ANALOG_PIN 36 // Port B, weißes kabel 
 
 // Port C: kein Analog-Digital Wandler
 //#define LICHT_SENSOR_DIGITAL_PIN 17 // Port C, gelbes kabel

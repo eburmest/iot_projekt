@@ -49,6 +49,12 @@ void loop() {
   MotorSteuerung::update();
   LichtSensor::update();
 
+  // Btn A startet den Motor manuell
+  if(M5.BtnA.read()) {
+    MotorSteuerung::manuell();
+    LichtSteuerungAktiv = false;
+  }
+
   // Btn B unterbricht den Motor
   if(M5.BtnB.read()) {
     MotorSteuerung::stop();
@@ -97,6 +103,8 @@ void loop() {
       M5.Lcd.println("Status: SENKEN"); break;    
     case MotorSteuerung::Status::STOP:
       M5.Lcd.println("Status: STOP"); break;
+    case MotorSteuerung::Status::MANUELL:
+      M5.Lcd.println("Status: MANUELL"); break;
     default:
       M5.Lcd.println("Status: ERROR"); break;
   }

@@ -6,12 +6,12 @@
 //#define MOTOR_STATUS_PIN 22 // Port A, weißes kabel
 
 // Port B nutzen um motor anzusteuern (funktioniert)
-#define MOTOR_ENABLE_PIN 26 // Port B, gelbes kabel
-#define MOTOR_STATUS_PIN 36 // Port B, weißes kabel
+//#define MOTOR_ENABLE_PIN 26 // Port B, gelbes kabel
+//#define MOTOR_STATUS_PIN 36 // Port B, weißes kabel
 
-// Port C nutzen um motor anzusteuern (funktioniert aus gründen irgendwie nicht so richtig)
-//#define MOTOR_ENABLE_PIN 17 // Port C, gelbes kabel
-//#define MOTOR_STATUS_PIN 16 // Port C, weißes kabel
+// Port C nutzen um motor anzusteuern (funktioniert, aber kabelfarben vertauscht)
+#define MOTOR_ENABLE_PIN 16 // Port C, weißes kabel
+#define MOTOR_STATUS_PIN 17 // Port C, gelbes kabel
 
 // globaler (static) Status der Klappe
 MotorSteuerung::Status MotorSteuerung::status;
@@ -90,3 +90,14 @@ void MotorSteuerung::stop() {
     status = STOP;
 
 }
+
+void MotorSteuerung::manuell() {
+    // startet den motor manuell
+
+    if(status == MANUELL)
+        return;
+
+    // motor starten
+    digitalWrite(MOTOR_ENABLE_PIN, 1);
+    status = MANUELL;
+} 

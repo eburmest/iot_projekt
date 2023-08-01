@@ -12,6 +12,7 @@ class MotorSteuerung {
         SENKEN,
         OBEN,
         UNTEN,
+        MANUELL,
         STOP, // die klappe hängt gerade irgendwo, genauer status erst wieder bekannt wenn schalter betätigt
     };
 
@@ -31,6 +32,7 @@ class MotorSteuerung {
     static void heben(); // steuert den motor an, falls der Status noch nicht "OBEN" ist
     static void senken();// steuert den motor an, falls der Status noch nicht "UNTEN" ist
     static void stop();
+    static void manuell(); // startet den motor manuell
 
 };
 
