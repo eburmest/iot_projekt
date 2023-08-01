@@ -1,10 +1,13 @@
 #include "motor_steuerung.h"
 #include "M5Stack.h"
 
-// Port B nutzen um motor anzusteuern
+// Port A nutzen um motor anzusteuern (funktioniert nicht)
+//#define MOTOR_ENABLE_PIN 21 // Port A, gelbes kabel
+//#define MOTOR_STATUS_PIN 22 // Port A, weißes kabel
+
+// Port B nutzen um motor anzusteuern (funktioniert)
 #define MOTOR_ENABLE_PIN 26 // Port B, gelbes kabel
 #define MOTOR_STATUS_PIN 36 // Port B, weißes kabel
-
 
 // Port C nutzen um motor anzusteuern (funktioniert aus gründen irgendwie nicht so richtig)
 //#define MOTOR_ENABLE_PIN 17 // Port C, gelbes kabel
@@ -20,8 +23,30 @@ void MotorSteuerung::init() {
     pinMode(MOTOR_ENABLE_PIN, OUTPUT);
     pinMode(MOTOR_STATUS_PIN, INPUT);
 
-    status = UNBEKANNT;
+    status = STOP;
     last_status_pin = digitalRead(MOTOR_STATUS_PIN);
+
+} 
+
+void MotorSteuerung::update() {
+    // sollte mehrmals pro sekunde aufgerufen werden
+
+    // lesen des status pins
+    int current_status_pin = digitalRead(MOTOR_STATUS_PIN);
+
+    // wenn der status pin von low nach high wechselt, ist die klappe oben
+    if((status == HEBEN) && (last_status_pin == 0) && (current_status_pin == 1)) {
+        status = OBEN;
+        digitalWrite(MOTOR_ENABLE_PIN, 0); // motor anhalten
+    }
+
+    // wenn der status pin von low nach high wechselt, ist die klappe oben
+    if((status == SENKEN) && (last_status_pin == 1) && (current_status_pin == 0)) {
+        status = UNTEN;
+        digitalWrite(MOTOR_ENABLE_PIN, 0); // motor anhalten
+    }
+
+    last_status_pin = current_status_pin;
 
 } 
 
@@ -30,68 +55,38 @@ MotorSteuerung::Status MotorSteuerung::getStatus() {
     return status;
 }
 
-bool MotorSteuerung::heben() {
+void MotorSteuerung::heben() {
     // steuert den motor an, falls der Status noch nicht "OBEN" ist
-    // @return true, solange der Motor angesteuert wird
 
     if(status == OBEN)
-        return false;
+        return;
 
-    // lesen des status pins
-    int current_status_pin = digitalRead(MOTOR_STATUS_PIN);
-
-    if((last_status_pin == 0) && (current_status_pin == 1)) {
-        // wenn der status pin von low nach high wechselt, ist die klappe oben
-        status = OBEN;
-        digitalWrite(MOTOR_ENABLE_PIN, 0); // motor anhalten
-        last_status_pin = current_status_pin;
-        return false;
-    }
-
-    // bewegen der klappe
+    // motor ansteuern
     digitalWrite(MOTOR_ENABLE_PIN, 1);
-    delay(500);
+    status = HEBEN;
 
-    // status aktualisieren
-    if(current_status_pin == 0)
-        status = HEBEN;
-    else
-        status = SENKEN; // evtl muss die klappe erst abgesenkt werden, um anschließend geöffnet werden zu können
-
-    last_status_pin = current_status_pin;
-    
-    return true;
 }
 
-bool MotorSteuerung::senken() {
+void MotorSteuerung::senken() {
     // steuert den motor an, falls der Status noch nicht "UNTEN" ist
     // @return true, solange der Motor angesteuert wird
 
     if(status == UNTEN)
-        return false;
+        return;
 
-    // lesen des status pins
-    int current_status_pin = digitalRead(MOTOR_STATUS_PIN);
-
-    if((last_status_pin == 1) && (current_status_pin == 0)) {
-        // wenn der status pin von high nach low wechselt, ist die klappe unten
-        status = UNTEN;
-        digitalWrite(MOTOR_ENABLE_PIN, 0); // motor anhalten
-        last_status_pin = current_status_pin;
-        return false;
-    }
-
-    // bewegen der klappe
+    // motor ansteuern
     digitalWrite(MOTOR_ENABLE_PIN, 1);
-    delay(500);
+    status = SENKEN;
 
-    // status aktualisieren
-    if(current_status_pin == 0)
-        status = HEBEN; // evtl muss die klappe erst gehoben werden, um anschließend gesenkt werden zu können
-    else
-        status = SENKEN; 
+}
 
-    last_status_pin = current_status_pin;
-    
-    return true;
+void MotorSteuerung::stop() {
+
+    if(status == STOP)
+        return;
+
+    // motor anhalten
+    digitalWrite(MOTOR_ENABLE_PIN, 0);
+    status = STOP;
+
 }

@@ -12,7 +12,7 @@ class MotorSteuerung {
         SENKEN,
         OBEN,
         UNTEN,
-        UNBEKANNT, // die klappe hängt gerade irgendwo, status erst wieder bekannt wenn schalter betätigt
+        STOP, // die klappe hängt gerade irgendwo, genauer status erst wieder bekannt wenn schalter betätigt
     };
 
     static Status status;
@@ -22,13 +22,15 @@ class MotorSteuerung {
     // Funktionen zum Steuern des Motors
 
     static void init(); // konfiguriert die gpio pins
+    static void update(); // sollte mehrmals pro sekunde aufgerufen werden
 
     static Status getStatus();
     
     // die Funktionen sollten mehrmals pro sekunde aufgerufen werden, damit der Motor rechtzeitig stoppen kann
     // @return true, solange der Motor angesteuert wird
-    static bool heben(); // steuert den motor an, falls der Status noch nicht "OBEN" ist
-    static bool senken();// steuert den motor an, falls der Status noch nicht "UNTEN" ist
+    static void heben(); // steuert den motor an, falls der Status noch nicht "OBEN" ist
+    static void senken();// steuert den motor an, falls der Status noch nicht "UNTEN" ist
+    static void stop();
 
 };
 
