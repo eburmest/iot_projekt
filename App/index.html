@@ -41,15 +41,15 @@
 
    <!-- Video//-->
    <div>
-    <img id="liveImage" src="192.168.4.1:80/capture" alt="Live-Bild">
+    <img id="liveImage" src="http://192.168.4.1/capture" alt="Live-Bild">
     
     <script>
-        // Funktion, um das Bild alle Sekunde neu zu laden
+         //Funktion, um das Bild alle Sekunde neu zu laden
         function updateImage() {
             const imageElement = document.getElementById('liveImage');
             imageElement.src = imageElement.src + '?timestamp=' + new Date().getTime();
         }
-        // Bildaktualisierung alle Sekunde starten
+         //Für aktualisirung jede Sekunde =1000 
         setInterval(updateImage, 1000);
     </script>
    </div>
