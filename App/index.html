@@ -6,12 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HühnerApp</title>
     <style>
-        body{
+        body
+        {
             margin: 0;
         }
         
-        div{
-            
+        div
+        {
             min-height: 10px;
             margin-bottom: 10px;;
         }
@@ -25,7 +26,6 @@
         .Bild
         {
             width: 20px
-            
         }
     </style>
 
@@ -37,25 +37,21 @@
    <div class="Uberschrift">
     <img class="Bild" src="img/Huhn.jpeg">
     Die Hühnerklappen App
-    
-    
    </div>
-
 
    <!-- Video//-->
    <div>
+    <img id="liveImage" src="192.168.4.1:80/capture" alt="Live-Bild">
     
-
-        <video width="320" height="270" volume=0 loop>
-
-
-        <video width="320" height="240" controls>
-           <!-- <source src=”M5Stack_IDE-Setup_and_HelloWorld” type=video/mp4>
-             
-          </video>//-->
-
-
-
+    <script>
+        // Funktion, um das Bild alle Sekunde neu zu laden
+        function updateImage() {
+            const imageElement = document.getElementById('liveImage');
+            imageElement.src = imageElement.src + '?timestamp=' + new Date().getTime();
+        }
+        // Bildaktualisierung alle Sekunde starten
+        setInterval(updateImage, 1000);
+    </script>
    </div>
 
    
