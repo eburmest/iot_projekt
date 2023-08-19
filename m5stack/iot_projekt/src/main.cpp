@@ -21,7 +21,7 @@ void setup()
 
   MotorSteuerung::init(); // Motorsteuerung sollte mit Port B verbunden sein
   LichtSensor::init();    // Lichtsensor sollte mit Port B verbunden sein
-  PowerManager::init(5 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 5 minuten in den deep sleep versetzt
+  PowerManager::init(5 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 5 minuten in den Schlafmodus versetzt
 
 }
 
@@ -54,8 +54,8 @@ void loop() {
 
   if(PowerManager::update()) {
     // der M5 Stack ist gerade wieder aufgewacht
-    LichtSensor::init();
     PowerManager::resetSchlafTimer(10000);
+    LichtSensor::update();
   }
 
   // Btn A startet den Motor manuell
