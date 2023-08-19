@@ -6,6 +6,7 @@ const char* password = "";
 
 #include "motor_steuerung.h"
 #include "licht_sensor.h"
+#include "power_management.h"
 
 //Das ist nur ein Versuch
 
@@ -20,6 +21,8 @@ void setup()
 
   MotorSteuerung::init(); // Motorsteuerung sollte mit Port B verbunden sein
   LichtSensor::init();    // Lichtsensor sollte mit Port B verbunden sein
+  PowerManager::init(5 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 5 minuten in den deep sleep versetzt
+
 }
 
 /*//Soll den M5 Stack mit dem Wlan verbinden um die Bilddaten zu übertragen
@@ -49,22 +52,30 @@ void loop() {
   MotorSteuerung::update();
   LichtSensor::update();
 
+  if(PowerManager::update()) {
+    // der M5 Stack ist gerade wieder aufgewacht
+    LichtSensor::init();
+    PowerManager::resetSchlafTimer(10000);
+  }
+
   // Btn A startet den Motor manuell
   if(M5.BtnA.read()) {
     MotorSteuerung::manuell();
     LichtSteuerungAktiv = false;
+    PowerManager::resetSchlafTimer(20000);
   }
 
   // Btn B unterbricht den Motor
   if(M5.BtnB.read()) {
     MotorSteuerung::stop();
     LichtSteuerungAktiv = false;
+    PowerManager::resetSchlafTimer(20000);
   }
 
   if(M5.BtnC.read()) {
     LichtSteuerungAktiv = true;
+    PowerManager::resetSchlafTimer(20000);
   }
-
 
   // Lichtsteuerung
   if(LichtSteuerungAktiv) {
@@ -75,6 +86,13 @@ void loop() {
     if(LichtSensor::istDauerhaftDunkel(5000))
       MotorSteuerung::senken();
 
+  }
+
+  // schlaf timer aussetzen, solange der motor angesteuert wird
+  if((MotorSteuerung::getStatus() == MotorSteuerung::SENKEN) || (MotorSteuerung::getStatus() == MotorSteuerung::HEBEN) || (MotorSteuerung::getStatus() == MotorSteuerung::MANUELL)) {
+    PowerManager::disableSchlafTimer();
+  } else {
+    PowerManager::enableSchlafTimer();
   }
 
   // Infos auf dem LCD
@@ -107,6 +125,13 @@ void loop() {
       M5.Lcd.println("Status: MANUELL"); break;
     default:
       M5.Lcd.println("Status: ERROR"); break;
+  }
+
+  if(PowerManager::istSchlafEnabled()) {
+    M5.Lcd.print("Schlaf Modus in: ");
+    M5.Lcd.println(PowerManager::getMillisekundenBisSchlaf() / 1000);
+  } else {
+    M5.Lcd.println("Schlaf Modus ist AUS");
   }
 
   delay(200);

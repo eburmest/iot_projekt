@@ -26,7 +26,7 @@ void MotorSteuerung::init() {
     status = STOP;
     last_status_pin = digitalRead(MOTOR_STATUS_PIN);
 
-} 
+}
 
 void MotorSteuerung::update() {
     // sollte mehrmals pro sekunde aufgerufen werden

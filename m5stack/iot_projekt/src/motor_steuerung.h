@@ -27,8 +27,6 @@ class MotorSteuerung {
 
     static Status getStatus();
     
-    // die Funktionen sollten mehrmals pro sekunde aufgerufen werden, damit der Motor rechtzeitig stoppen kann
-    // @return true, solange der Motor angesteuert wird
     static void heben(); // steuert den motor an, falls der Status noch nicht "OBEN" ist
     static void senken();// steuert den motor an, falls der Status noch nicht "UNTEN" ist
     static void stop();
