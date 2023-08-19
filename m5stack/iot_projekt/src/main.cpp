@@ -90,10 +90,10 @@ void loop() {
   }
 
   // schlaf timer aussetzen, solange der motor angesteuert wird
-  if((MotorSteuerung::getStatus() == MotorSteuerung::SENKEN) || (MotorSteuerung::getStatus() == MotorSteuerung::HEBEN) || (MotorSteuerung::getStatus() == MotorSteuerung::MANUELL)) {
-    PowerManager::disableSchlafTimer();
+  if((MotorSteuerung::getStatus() == MotorSteuerung::OBEN) || (MotorSteuerung::getStatus() == MotorSteuerung::UNTEN)) {
+      PowerManager::enableSchlafTimer();
   } else {
-    PowerManager::enableSchlafTimer();
+      PowerManager::disableSchlafTimer();
   }
 
   // Infos auf dem LCD
