@@ -61,19 +61,20 @@ void loop() {
   // Btn A startet den Motor manuell
   if(M5.BtnA.read()) {
     MotorSteuerung::manuell();
+    PowerManager::disableSchlafTimer();
     LichtSteuerungAktiv = false;
-    PowerManager::resetSchlafTimer(20000);
   }
 
   // Btn B unterbricht den Motor
   if(M5.BtnB.read()) {
     MotorSteuerung::stop();
+    PowerManager::disableSchlafTimer();
     LichtSteuerungAktiv = false;
-    PowerManager::resetSchlafTimer(20000);
   }
 
   if(M5.BtnC.read()) {
     LichtSteuerungAktiv = true;
+    PowerManager::enableSchlafTimer();
     PowerManager::resetSchlafTimer(20000);
   }
 

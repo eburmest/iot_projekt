@@ -37,12 +37,14 @@ void MotorSteuerung::update() {
     // wenn der status pin von low nach high wechselt, ist die klappe oben
     if((status == HEBEN) && (last_status_pin == 0) && (current_status_pin == 1)) {
         status = OBEN;
+        delay(300); // den motor etwas weiter laufen lassen, damit der schalter freigegeben wird
         digitalWrite(MOTOR_ENABLE_PIN, 0); // motor anhalten
     }
 
     // wenn der status pin von low nach high wechselt, ist die klappe oben
     if((status == SENKEN) && (last_status_pin == 1) && (current_status_pin == 0)) {
         status = UNTEN;
+        delay(300); // den motor etwas weiter laufen lassen, damit der schalter freigegeben wird
         digitalWrite(MOTOR_ENABLE_PIN, 0); // motor anhalten
     }
 

@@ -9,7 +9,7 @@ void PowerManager::init(uint32_t schlaf_dauer, uint32_t schlaf_start) {
     // legt fest, wie lange der Schlaf dauern soll (millisekunden)
     // und in wie vielen millisekunden der Schlaf starten soll
 
-    M5.Power.setWakeupButton(BUTTON_A_PIN);
+    M5.Power.setWakeupButton(BUTTON_B_PIN);
 
     setSchlafDauer(schlaf_dauer);
     resetSchlafTimer(schlaf_start);
