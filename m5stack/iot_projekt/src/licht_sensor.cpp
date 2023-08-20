@@ -36,6 +36,13 @@ void LichtSensor::update() {
 
 }
 
+void LichtSensor::reset() {
+    // sollte nach dem aufwachen aufgerufen werden
+    
+    last_dunkel_millis = millis();
+    last_hell_millis = millis();
+} 
+
 int LichtSensor::getLichtLevel() {
     // funktioniert nur, wenn der Licht Sensor an Port B angeschlossen ist
 

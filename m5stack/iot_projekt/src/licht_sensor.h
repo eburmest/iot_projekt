@@ -11,6 +11,7 @@ class LichtSensor {
 
     static void init();
     static void update(); // sollte mehrmals pro sekunde aufgerufen werden
+    static void reset(); // sollte nach dem aufwachen aufgerufen werden
 
     static int getLichtLevel();
 

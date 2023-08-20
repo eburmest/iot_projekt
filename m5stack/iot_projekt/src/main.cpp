@@ -7,8 +7,8 @@ const char* password = "";
 #include "motor_steuerung.h"
 #include "licht_sensor.h"
 #include "power_management.h"
+#include <Adafruit_NeoPixel.h>
 
-//Das ist nur ein Versuch
 
 void setup() 
 {
@@ -21,7 +21,7 @@ void setup()
 
   MotorSteuerung::init(); // Motorsteuerung sollte mit Port B verbunden sein
   LichtSensor::init();    // Lichtsensor sollte mit Port B verbunden sein
-  PowerManager::init(5 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 5 minuten in den Schlafmodus versetzt
+  PowerManager::init(10 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 10 minuten in den Schlafmodus versetzt
 
 }
 
@@ -48,14 +48,22 @@ void connect()
 void loop() {
 
   static bool LichtSteuerungAktiv = false;
+  static Adafruit_NeoPixel LEDs(10, 15, NEO_GRB + NEO_KHZ800);
 
   MotorSteuerung::update();
   LichtSensor::update();
 
   if(PowerManager::update()) {
     // der M5 Stack ist gerade wieder aufgewacht
-    PowerManager::resetSchlafTimer(10000);
-    LichtSensor::update();
+    PowerManager::resetSchlafTimer(10000); // 5 sekunden bis der m5 stack wieder einschläft
+    LichtSensor::reset();
+
+    // kurzes blinken nach dem aufwachen
+    LEDs.fill(LEDs.Color(0, 255, 0), 0, 5);
+    LEDs.show();
+    delay(300);
+    LEDs.clear();
+    LEDs.show();
   }
 
   // Btn A startet den Motor manuell
@@ -134,6 +142,9 @@ void loop() {
   } else {
     M5.Lcd.println("Schlaf Modus ist AUS");
   }
+
+  M5.Lcd.println("Akku: " + String(M5.Power.getBatteryLevel()) + " % ");
+
 
   delay(200);
 }

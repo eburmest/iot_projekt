@@ -26,8 +26,12 @@ bool PowerManager::update() {
         Serial.println("Schlaf Modus aktiviert!");
         delay(50);
 
-        // die funktion deepSleep nimmt als parameter mikrosekunden, nicht millisekunden
+        // die funktion lightSleep nimmt als parameter mikrosekunden, nicht millisekunden
         M5.Power.lightSleep(_schlaf_dauer * 1000);
+
+        //
+        M5.Lcd.sleep();
+        M5.Lcd.setBrightness(100);
 
         return true;
     }
@@ -41,7 +45,8 @@ void PowerManager::enableSchlafTimer() {
 }
 
 void PowerManager::disableSchlafTimer() {
-
+    M5.Lcd.setBrightness(100);
+    M5.Lcd.wakeup();
     _schlaf_enable = false;
 }
 
