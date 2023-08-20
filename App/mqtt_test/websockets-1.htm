@@ -15,8 +15,17 @@
 		function sendMessage(message, sub_topic) {
 
 			if(mqtt_connected) {
-				mqtt.send(topic + sub_topic, message, 1, true);
-				console.log("Send Mqtt-Message: " + message + " to Topic: " + topic + sub_topic);
+
+				if(typeof(message) === "string") {
+					mqtt.send(topic + sub_topic, message, 1, true);
+				} else {
+					let buffer = new ArrayBuffer(32); // create a buffer of length 32
+					buffer = message;
+					mqtt.send(topic + sub_topic, buffer, 1, true);
+				}
+
+				console.log("Sent Mqtt-Message: " + message + " to Topic: " + topic + sub_topic);
+
 			}
 
 		}
@@ -42,7 +51,11 @@
 		function MQTTonMessageArrived(message) {
 
 			if(message.destinationName === topic+"door") {
-				document.getElementById("Status").innerHTML = message.payloadString;
+				if(message.payloadString === "0") {
+					document.getElementById("Status").innerHTML = "Closed";
+				} else {
+					document.getElementById("Status").innerHTML = "Open";
+				}
 			}
 
 
@@ -89,6 +102,7 @@
 		}
 
 	  	function MQTTconnect() {
+
 			console.log("connecting to " + host + " " + port);
 		
 			var options = {
@@ -113,10 +127,10 @@
      <body>
    <h1>Main Body Test</h1>
  	<script>
-	MQTTinit();
+		MQTTinit();
 	</script>
 	<p id="Status"></p>
-	<button onclick="sendMessage('open', 'door')">Open</button>
-	<button onclick="sendMessage('close', 'door')">Close</button>
+	<button onclick="sendMessage('1', 'door')">Open</button>
+	<button onclick="sendMessage('0', 'door')">Close</button>
    </body>	
 </html>
