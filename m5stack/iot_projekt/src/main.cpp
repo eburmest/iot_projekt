@@ -55,7 +55,7 @@ void loop() {
 
   if(PowerManager::update()) {
     // der M5 Stack ist gerade wieder aufgewacht
-    PowerManager::resetSchlafTimer(10000); // 5 sekunden bis der m5 stack wieder einschläft
+    PowerManager::resetSchlafTimer(10000); // 10 sekunden bis der m5 stack wieder einschläft
     LichtSensor::reset();
 
     // kurzes blinken nach dem aufwachen
