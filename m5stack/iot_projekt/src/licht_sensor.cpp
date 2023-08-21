@@ -18,6 +18,7 @@ unsigned long LichtSensor::last_hell_millis;
 unsigned long LichtSensor::last_dunkel_millis;
 
 void LichtSensor::init() {
+    // konfigurieren der GPIO Pins um den Lichtsensor auslesen zu können
 
     pinMode(LICHT_SENSOR_DIGITAL_PIN, INPUT);
     pinMode(LICHT_SENSOR_ANALOG_PIN, INPUT);

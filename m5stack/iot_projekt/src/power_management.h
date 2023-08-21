@@ -9,7 +9,7 @@ class PowerManager {
 
     static bool _schlaf_enable;
     static uint64_t _schlaf_start; // zeitpunkt (=millis()), ab dem der esp32 in den deep sleep versetzt werden soll
-    static uint32_t _schlaf_dauer; // zeit in millisekunden, default sind 5 minuten
+    static uint32_t _schlaf_dauer; // zeit in millisekunden
 
   public:
 
@@ -17,13 +17,14 @@ class PowerManager {
     // und in wie vielen millisekunden der Schlaf starten soll
     static void init(uint32_t schlaf_dauer, uint32_t schlaf_start);
 
-    // sobald der timer den wert 0 erreicht, wird der esp32 in den Schlaf modus versetzt
+    // sobald der vorgegebene Zeitpunkt erreicht ist, wird der esp32 in den Schlafmodus (lightSleep()) versetzt
     // nach der vorgebenen anzahl an millisekunden sollte er wieder aufwachen
-    // sollte mehrmals pro sekunde aufgerufen werden
     // gibt true zurueck, nachdem der M5 Stack wieder aufgewacht ist
+    // sollte mehrmals pro sekunde aufgerufen werden
     static bool update(); 
 
-    // schaltet den schlaf timer an / aus
+    // wenn der "SchlafTimer" enabled ist, wird der M5Stack 
+    // nach Erreichen des vorgegebenen Zeitpunktes in den Schlafmodus versetzt
     static void enableSchlafTimer();
     static void disableSchlafTimer();
     static bool istSchlafEnabled();
