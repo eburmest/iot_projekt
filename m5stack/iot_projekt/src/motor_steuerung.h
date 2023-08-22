@@ -1,6 +1,7 @@
 #ifndef MOTOR_STEUERUNG_H
 #define MOTOR_STEUERUNG_H
 
+#include "M5Stack.h"
 
 class MotorSteuerung {
 
@@ -32,6 +33,7 @@ class MotorSteuerung {
     static void update(); 
 
     static Status getStatus();
+    static String getStatusString();
     
     static void heben(); // steuert den Motor an, falls der Status noch nicht "OBEN" ist
     static void senken();// steuert den Motor an, falls der Status noch nicht "UNTEN" ist

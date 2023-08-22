@@ -15,8 +15,14 @@ PubSubClient client(wClient);
 
 const char *mqtt_server = "test.mosquitto.org";
 const char *subscripedTopic ="HSOSBarn/door";
+const char *statusTopic="HSOSBarn/status";
 const char *ssid = "WiFiBarn";
 const char *password = "12345678AB";
+unsigned long letztes_status_update = 0; // zeitpunkt, zu dem das letzte mal ein status update per mqtt versendet wurde
+unsigned long status_update_intervall = 10 * 1000; // 20 Sekunden (also jedes mal wenn der m5 aufwacht)
+
+bool LichtSteuerungAktiv = false;
+Adafruit_NeoPixel LEDs(10, 15, NEO_GRB + NEO_KHZ800);
 
 void startWiFi()
 {
@@ -36,11 +42,24 @@ void callback(char *topic, byte *message, unsigned int length)
 {
   if (message[0]==48)
   {
+    LichtSteuerungAktiv = false;
     MotorSteuerung::senken();
   }
   else if(message[0]==49)
   {
+    LichtSteuerungAktiv = false;
     MotorSteuerung::heben();
+  }
+  else if(message[0]==50)
+  {
+    // automatik modus
+    LichtSteuerungAktiv = true;
+  }   
+  else if(message[0]==51)
+  {
+    // stop
+    LichtSteuerungAktiv = false;
+    MotorSteuerung::stop();
   }
   else
   {
@@ -69,17 +88,22 @@ void setup()
 
 void loop() {
 
-  static bool LichtSteuerungAktiv = false;
-  static Adafruit_NeoPixel LEDs(10, 15, NEO_GRB + NEO_KHZ800);
-
   while (!client.connected())
-    {
+  {
       if (client.connect("HSMW3614"))
       {
         client.subscribe(subscripedTopic);
+        client.flush();
       }
-    }
+  }
+
   client.loop();
+
+  // mqtt status update versenden
+  if(letztes_status_update + status_update_intervall < millis()) {
+    client.publish(statusTopic, MotorSteuerung::getStatusString().c_str());
+    letztes_status_update = millis();
+  }
 
   MotorSteuerung::update();
   LichtSensor::update();
@@ -150,22 +174,8 @@ void loop() {
   else
     M5.Lcd.println("Licht: Hell");
 
-  switch(MotorSteuerung::getStatus()) {
-    case MotorSteuerung::Status::OBEN:
-      M5.Lcd.println("Status: OBEN"); break;
-    case MotorSteuerung::Status::UNTEN:
-      M5.Lcd.println("Status: UNTEN"); break;
-    case MotorSteuerung::Status::HEBEN:
-      M5.Lcd.println("Status: HEBEN"); break;
-    case MotorSteuerung::Status::SENKEN:
-      M5.Lcd.println("Status: SENKEN"); break;    
-    case MotorSteuerung::Status::STOP:
-      M5.Lcd.println("Status: STOP"); break;
-    case MotorSteuerung::Status::MANUELL:
-      M5.Lcd.println("Status: MANUELL"); break;
-    default:
-      M5.Lcd.println("Status: ERROR"); break;
-  }
+  M5.Lcd.print("Status: ");
+  M5.Lcd.println(MotorSteuerung::getStatusString());
 
   if(PowerManager::istSchlafEnabled()) {
     M5.Lcd.print("Schlaf Modus in: ");

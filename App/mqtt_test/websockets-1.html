@@ -35,6 +35,7 @@
 		{
 			mqtt_connected = true;
 			MQTTSubscribe("door");
+			MQTTSubscribe("status");
 			console.log("MQTT connected: " + host);
 		}
 
@@ -53,13 +54,20 @@
 
 			if(message.destinationName === topic+"door") {
 				if(message.payloadString === "0") {
-					document.getElementById("Status").innerHTML = "Closed";
-				} else {
-					document.getElementById("Status").innerHTML = "Open";
+					document.getElementById("WunschStatus").innerHTML = "Gewünschter Status: Zu";
+				} else if(message.payloadString === "1") {
+					document.getElementById("WunschStatus").innerHTML = "Gewünschter Status: Auf";
+				} else if(message.payloadString === "2") {
+					document.getElementById("WunschStatus").innerHTML = "Gewünschter Status: Automatik";
+				} else if(message.payloadString === "3") {
+					document.getElementById("WunschStatus").innerHTML = "Gewünschter Status: Stop";
 				}
 			}
-
-
+			
+			if(message.destinationName === topic+"status") {
+				document.getElementById("IstStatus").innerHTML = "Status der Klappe: " + message.payloadString;
+			}
+			
 			console.log("MQTT message arrived: " + message.payloadString + " destination: " + message.destinationName);
 		}
 
@@ -149,8 +157,11 @@
  	<script>
 		MQTTinit();
 	</script>
-	<p id="Status"></p>
-	<button onclick="sendMessage('1', 'door')">Open</button>
-	<button onclick="sendMessage('0', 'door')">Close</button>
+	<p id="IstStatus"></p>
+	<p id="WunschStatus"></p>
+	<button onclick="sendMessage('0', 'door')">Zu</button>
+	<button onclick="sendMessage('1', 'door')">Auf</button>
+	<button onclick="sendMessage('2', 'door')">Automatik</button>
+	<button onclick="sendMessage('3', 'door')">Stop</button>
    </body>	
 </html>

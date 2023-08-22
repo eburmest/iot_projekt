@@ -57,6 +57,27 @@ MotorSteuerung::Status MotorSteuerung::getStatus() {
     return status;
 }
 
+String MotorSteuerung::getStatusString() {
+
+    switch(MotorSteuerung::getStatus()) {
+      case MotorSteuerung::Status::OBEN:
+        return "OBEN";
+      case MotorSteuerung::Status::UNTEN:
+        return "UNTEN";
+      case MotorSteuerung::Status::HEBEN:
+        return "HEBEN";
+      case MotorSteuerung::Status::SENKEN:
+        return "SENKEN";    
+      case MotorSteuerung::Status::STOP:
+        return "STOP";
+      case MotorSteuerung::Status::MANUELL:
+        return "MANUELL";
+      default:
+        return "ERROR";
+    }
+
+}
+
 void MotorSteuerung::heben() {
     // steuert den motor an, falls der Status noch nicht "OBEN" ist
 
