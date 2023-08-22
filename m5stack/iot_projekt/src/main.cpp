@@ -34,14 +34,17 @@ void startWiFi()
 
 void callback(char *topic, byte *message, unsigned int length)
 {
-  if(message[0])
+  if (message[0]==48)
   {
-    //M5.Lcd.print("Oeffnen");
+    MotorSteuerung::senken();
+  }
+  else if(message[0]==49)
+  {
     MotorSteuerung::heben();
   }
-  else{
-    //M5.Lcd.print("Schliessen");
-    MotorSteuerung::senken();
+  else
+  {
+    M5.Lcd.print("error");  
   }
 }
 
@@ -68,6 +71,15 @@ void loop() {
 
   static bool LichtSteuerungAktiv = false;
   static Adafruit_NeoPixel LEDs(10, 15, NEO_GRB + NEO_KHZ800);
+
+  while (!client.connected())
+    {
+      if (client.connect("HSMW3614"))
+      {
+        client.subscribe(subscripedTopic);
+      }
+    }
+  client.loop();
 
   MotorSteuerung::update();
   LichtSensor::update();
