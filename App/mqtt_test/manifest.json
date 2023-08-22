@@ -1,8 +1,8 @@
 {
-    "name": "Hünerklappen App",
+    "name": "HünerklappenApp",
     "theme_color": "#2196f3",
     "background_color": "#2196f3",
     "display": "fullscreen",
     "scope": "/",
-    "start_url": "/"
+    "start_url": "/websockets-1.html"
   }

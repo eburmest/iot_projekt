@@ -18,6 +18,7 @@ const char *subscripedTopic ="HSOSBarn/door";
 const char *ssid = "WiFiBarn";
 const char *password = "12345678AB";
 
+void startWiFi()
 {
   M5.Lcd.print("WiFi verbinden");
   WiFi.begin(ssid, password);
@@ -57,7 +58,6 @@ void setup()
 
   MotorSteuerung::init(); // Motorsteuerung sollte mit Port B verbunden sein
   LichtSensor::init();    // Lichtsensor sollte mit Port B verbunden sein
-  App::init();
   PowerManager::init(10 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 10 minuten in den Schlafmodus versetzt
 
 }
