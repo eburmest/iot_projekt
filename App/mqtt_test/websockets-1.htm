@@ -10,8 +10,7 @@
 		var port=8080;
 		var topic="HSOSBarn/"
 		var cname="HSOS537";
-
-
+		
 		function sendMessage(message, sub_topic) {
 
 			if(mqtt_connected) {
@@ -124,10 +123,27 @@
 			setTimeout(MQTTupdate, 5000);
 		}
 	 
+		
 	  </script>
    </head>
      <body>
-   <h1>Main Body Test</h1>
+   <h1>Die Hühnerklappen App</h1>
+   <div class="Uberschrift">
+    <div>
+		<img id="liveImage" src="http://192.168.4.1/capture" alt="Live-Bild">
+		
+		<script>
+			 //Funktion, um das Bild alle Sekunde neu zu laden
+			function updateImage() {
+				const imageElement = document.getElementById('liveImage');
+				imageElement.src = imageElement.src + '?timestamp=' + new Date().getTime();
+			}
+			 //Für aktualisirung jede Sekunde =1000 
+			setInterval(updateImage, 1000);
+		</script>
+	   </div>
+    
+   </div>
  	<script>
 		MQTTinit();
 	</script>
