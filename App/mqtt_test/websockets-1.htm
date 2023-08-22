@@ -32,19 +32,21 @@
 
 		// mqtt callback funktionen
 
-		function MQTTonConnected() {
+		function MQTTonConnected() 
+		{
 			mqtt_connected = true;
 			MQTTSubscribe("door");
 			console.log("MQTT connected: " + host);
 		}
 
-		function MQTTonConnectionLost() {
+		function MQTTonConnectionLost() 
+		{
 			mqtt_connected = false;
 			console.log("MQTT connection lost");
 		}
 
-		function MQTTonMessageDelivered() {
-
+		function MQTTonMessageDelivered() 
+		{
 			console.log("MQTT message delivered");
 		}
 

@@ -1,49 +1,68 @@
 #include <M5Stack.h>
-#include <WiFi.h>
 #include "HTTPClient.h"
-const char* Adresse = "";
-const char* password = "";
+#include <PubSubClient.h>
+#include <WiFiClient.h>
+#include <WiFi.h>
+
 
 #include "motor_steuerung.h"
 #include "licht_sensor.h"
 #include "power_management.h"
 #include <Adafruit_NeoPixel.h>
 
+WiFiClient wClient;
+PubSubClient client(wClient);
+
+const char *mqtt_server = "test.mosquitto.org";
+const char *subscripedTopic ="HSOSBarn/door";
+const char *ssid = "WiFiBarn";
+const char *password = "12345678AB";
+
+{
+  M5.Lcd.print("WiFi verbinden");
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    M5.Lcd.print(".");
+  }
+  M5.Lcd.print("Wlan verbunden");
+  delay(2000);
+  M5.Lcd.clear();
+}
+
+void callback(char *topic, byte *message, unsigned int length)
+{
+  if(message[0])
+  {
+    //M5.Lcd.print("Oeffnen");
+    MotorSteuerung::heben();
+  }
+  else{
+    //M5.Lcd.print("Schliessen");
+    MotorSteuerung::senken();
+  }
+}
 
 void setup() 
 {
-  // put your setup code here, to run once:
-
   M5.Power.begin();
   M5.begin();
 
   M5.Lcd.print("Hello World!");
 
+  startWiFi();
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+
   MotorSteuerung::init(); // Motorsteuerung sollte mit Port B verbunden sein
   LichtSensor::init();    // Lichtsensor sollte mit Port B verbunden sein
+  App::init();
   PowerManager::init(10 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 10 minuten in den Schlafmodus versetzt
 
 }
 
-/*//Soll den M5 Stack mit dem Wlan verbinden um die Bilddaten zu übertragen
-void connect() 
-{
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    M5.Lcd.print(".");
-  }
-  M5.Lcd.println("");
-  M5.Lcd.println("WiFi connected!");
-  // connect to http server
-  client.begin(String(server_url));
-  client.sendRequest("CONNECT");
-  while (!client.connected()) {
-    delay(500);
-    M5.Lcd.print(".");
-  }
-  M5.Lcd.println("connected to http server");
-}*/
+
 
 void loop() {
 
