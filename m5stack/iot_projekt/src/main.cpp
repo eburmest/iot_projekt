@@ -55,13 +55,13 @@ void setup()
 
   M5.Lcd.print("Hello World!");
 
-  startWiFi();
-  client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
-
   MotorSteuerung::init(); // Motorsteuerung sollte mit Port B verbunden sein
   LichtSensor::init();    // Lichtsensor sollte mit Port B verbunden sein
   PowerManager::init(10 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 10 minuten in den Schlafmodus versetzt
+
+  startWiFi();
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
 
 }
 
@@ -175,7 +175,6 @@ void loop() {
   }
 
   M5.Lcd.println("Akku: " + String(M5.Power.getBatteryLevel()) + " % ");
-
 
   delay(200);
 }
