@@ -16,27 +16,16 @@ PubSubClient client(wClient);
 const char *mqtt_server = "test.mosquitto.org";
 const char *subscripedTopic ="HSOSBarn/door";
 const char *statusTopic="HSOSBarn/status";
+const char *lichtTopic="HSOSBarn/licht";
+const char *zeitTopic="HSOSBarn/zeit";
 const char *ssid = "WiFiBarn";
 const char *password = "12345678AB";
 unsigned long letztes_status_update = 0; // zeitpunkt, zu dem das letzte mal ein status update per mqtt versendet wurde
-unsigned long status_update_intervall = 10 * 1000; // 20 Sekunden (also jedes mal wenn der m5 aufwacht)
+unsigned long status_update_intervall = 20 * 1000; // 20 Sekunden (also jedes mal wenn der m5 aufwacht)
 
 bool LichtSteuerungAktiv = false;
 Adafruit_NeoPixel LEDs(10, 15, NEO_GRB + NEO_KHZ800);
 
-void startWiFi()
-{
-  M5.Lcd.print("WiFi verbinden");
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    M5.Lcd.print(".");
-  }
-  M5.Lcd.print("Wlan verbunden");
-  delay(2000);
-  M5.Lcd.clear();
-}
 
 void callback(char *topic, byte *message, unsigned int length)
 {
@@ -72,37 +61,42 @@ void setup()
   M5.Power.begin();
   M5.begin();
 
-  M5.Lcd.print("Hello World!");
-
-  MotorSteuerung::init(); // Motorsteuerung sollte mit Port B verbunden sein
+  MotorSteuerung::init(); // Motorsteuerung sollte mit Port C verbunden sein
   LichtSensor::init();    // Lichtsensor sollte mit Port B verbunden sein
   PowerManager::init(10 * 60 * 1000, 10000); // der esp32 wird in 10 sekunden für 10 minuten in den Schlafmodus versetzt
 
-  startWiFi();
+  WiFi.begin(ssid, password);
   client.setServer(mqtt_server, 1883);
   client.setCallback(callback);
 
 }
 
-
-
 void loop() {
 
-  while (!client.connected())
-  {
-      if (client.connect("HSMW3614"))
-      {
+  if(WiFi.status() == WL_CONNECTED) {
+
+    if (!client.connected()) {
+
+      if (client.connect("HSMW3614")) {
+
         client.subscribe(subscripedTopic);
         client.flush();
+
       }
-  }
 
-  client.loop();
+    } else {
+      // mqtt status update versenden
+      if(letztes_status_update + status_update_intervall < millis()) {
+        client.publish(statusTopic, MotorSteuerung::getStatusString().c_str());
+        client.publish(lichtTopic, LichtSensor::istDunkel() ? "Nacht" : "Tag");
+        client.publish(zeitTopic, String(millis()).c_str());
+        letztes_status_update = millis();
+      }
 
-  // mqtt status update versenden
-  if(letztes_status_update + status_update_intervall < millis()) {
-    client.publish(statusTopic, MotorSteuerung::getStatusString().c_str());
-    letztes_status_update = millis();
+      client.loop();
+
+    }
+
   }
 
   MotorSteuerung::update();
@@ -185,6 +179,9 @@ void loop() {
   }
 
   M5.Lcd.println("Akku: " + String(M5.Power.getBatteryLevel()) + " % ");
+
+  M5.Lcd.print("MQTT: ");
+  M5.Lcd.println(client.connected() ? "verbunden" : "nicht verbunden");
 
   delay(200);
 }

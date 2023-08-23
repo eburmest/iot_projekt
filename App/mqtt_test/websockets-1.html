@@ -36,6 +36,8 @@
 			mqtt_connected = true;
 			MQTTSubscribe("door");
 			MQTTSubscribe("status");
+			MQTTSubscribe("licht");
+			MQTTSubscribe("zeit");
 			console.log("MQTT connected: " + host);
 		}
 
@@ -66,6 +68,14 @@
 			
 			if(message.destinationName === topic+"status") {
 				document.getElementById("IstStatus").innerHTML = "Status der Klappe: " + message.payloadString;
+			}
+			
+			if(message.destinationName === topic+"zeit") {
+				document.getElementById("Zeit").innerHTML = "letzte M5 Zeit (millis()): " + message.payloadString;
+			}
+			
+			if(message.destinationName === topic+"licht") {
+				document.getElementById("Licht").innerHTML = "Lichtsensor: " + message.payloadString;
 			}
 			
 			console.log("MQTT message arrived: " + message.payloadString + " destination: " + message.destinationName);
@@ -157,6 +167,8 @@
  	<script>
 		MQTTinit();
 	</script>
+	<p id="Zeit"></p>
+	<p id="Licht"></p>
 	<p id="IstStatus"></p>
 	<p id="WunschStatus"></p>
 	<button onclick="sendMessage('0', 'door')">Zu</button>
