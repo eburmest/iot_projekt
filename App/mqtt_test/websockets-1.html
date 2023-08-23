@@ -56,13 +56,13 @@
 
 			if(message.destinationName === topic+"door") {
 				if(message.payloadString === "0") {
-					document.getElementById("WunschStatus").innerHTML = "Gewünschter Status: Zu";
+					document.getElementById("WunschStatus").innerHTML = "Gewuenschter Status: Zu";
 				} else if(message.payloadString === "1") {
-					document.getElementById("WunschStatus").innerHTML = "Gewünschter Status: Auf";
+					document.getElementById("WunschStatus").innerHTML = "Gewuenschter Status: Auf";
 				} else if(message.payloadString === "2") {
-					document.getElementById("WunschStatus").innerHTML = "Gewünschter Status: Automatik";
+					document.getElementById("WunschStatus").innerHTML = "Gewuenschter Status: Automatik";
 				} else if(message.payloadString === "3") {
-					document.getElementById("WunschStatus").innerHTML = "Gewünschter Status: Stop";
+					document.getElementById("WunschStatus").innerHTML = "Gewuenschter Status: Stop";
 				}
 			}
 			
@@ -147,7 +147,7 @@
    </head>
    <link rel="manifest" href="manifest.json">
      <body>
-   <h1>Die Hühnerklappen App</h1>
+   <h1>Die Huehnerklappen App</h1>
    <div class="Uberschrift">
     <div>
 		<img id="liveImage" src="http://192.168.4.1/capture" alt="Live-Bild">

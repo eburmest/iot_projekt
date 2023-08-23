@@ -21,7 +21,7 @@ const char *zeitTopic="HSOSBarn/zeit";
 const char *ssid = "WiFiBarn";
 const char *password = "12345678AB";
 unsigned long letztes_status_update = 0; // zeitpunkt, zu dem das letzte mal ein status update per mqtt versendet wurde
-unsigned long status_update_intervall = 20 * 1000; // 20 Sekunden (also jedes mal wenn der m5 aufwacht)
+unsigned long status_update_intervall = 5 * 1000; // 5 Sekunden (also jedes mal wenn der m5 aufwacht)
 
 bool LichtSteuerungAktiv = false;
 Adafruit_NeoPixel LEDs(10, 15, NEO_GRB + NEO_KHZ800);
@@ -106,6 +106,7 @@ void loop() {
     // der M5 Stack ist gerade wieder aufgewacht
     PowerManager::resetSchlafTimer(10000); // 10 sekunden bis der m5 stack wieder einschläft
     LichtSensor::reset();
+    WiFi.begin(ssid, password);
 
     // kurzes blinken nach dem aufwachen
     LEDs.fill(LEDs.Color(0, 255, 0), 0, 5);
@@ -113,6 +114,7 @@ void loop() {
     delay(300);
     LEDs.clear();
     LEDs.show();
+
   }
 
   // Btn A startet den Motor manuell
